@@ -1,6 +1,6 @@
 {
   "name": "lambda-cloudwatch-slack",
-  "version": "0.3.0-lm.2",
+  "version": "0.3.0-lm.3",
   "description": "Better Slack notifications for AWS CloudWatch",
   "authors": [
     "Christopher Reichert <creichert07@gmail.com>",
