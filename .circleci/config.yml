@@ -1,0 +1,51 @@
+defaults: &defaults
+  working_directory: ~/sls-cloudwatch-slack
+
+version: 2
+jobs:
+  build:
+    <<: *defaults
+    docker:
+      - image: circleci/node:10
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/sls-cloudwatch-slack
+      - restore_cache:
+          key: yarn-cache-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install dependencies
+          command: "yarn install --pure-lockfile --non-interactive"
+      - save_cache:
+          key: yarn-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+      - persist_to_workspace:
+          root: .
+          paths: node_modules
+
+  deploy-master:
+    <<: *defaults
+    docker:
+      - image: lightmaker/node:10
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/sls-cloudwatch-slack
+      - deploy:
+          name: Deploy to AWS
+          command: "yarn deploy"
+
+workflows:
+  version: 2
+  sls-cloudwatch-slack:
+    jobs:
+      - build:
+          context: org-global
+      - deploy-master:
+          context: org-global
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
