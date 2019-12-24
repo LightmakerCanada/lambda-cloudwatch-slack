@@ -27,7 +27,7 @@ jobs:
   deploy-master:
     <<: *defaults
     docker:
-      - image: lightmaker/node:10
+      - image: circleci/node:10
     steps:
       - checkout
       - attach_workspace:
